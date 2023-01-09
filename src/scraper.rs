@@ -28,14 +28,33 @@ pub async fn get_twitch_channel(channel_id: String) -> Result<TwitchChannel> {
         .send()
         .await
         .map_err(|_| Error::InternalRequestFailed)?;
-    let body = resp.text().await.map_err(|_| Error::InternalRequestFailed)?;
-    let json: serde_json::Value = serde_json::from_str(&body).map_err(|_| Error::InternalRequestFailed)?;
+    let body = resp
+        .text()
+        .await
+        .map_err(|_| Error::InternalRequestFailed)?;
+    let json: serde_json::Value =
+        serde_json::from_str(&body).map_err(|_| Error::InternalRequestFailed)?;
     let data = &json[0]["data"]["userOrError"];
-    let banner = data["bannerImageURL"].as_str().ok_or(Error::InternalRequestFailed)?.to_string();
-    let id = data["id"].as_str().ok_or(Error::InternalRequestFailed)?.to_string();
-    let name = data["displayName"].as_str().ok_or(Error::InternalRequestFailed)?.to_string();
-    let color = data["primaryColorHex"].as_str().ok_or(Error::InternalRequestFailed)?.to_string();
-    let avatar = data["profileImageURL"].as_str().ok_or(Error::InternalRequestFailed)?.to_string();
+    let banner = data["bannerImageURL"]
+        .as_str()
+        .ok_or(Error::InternalRequestFailed)?
+        .to_string();
+    let id = data["id"]
+        .as_str()
+        .ok_or(Error::InternalRequestFailed)?
+        .to_string();
+    let name = data["displayName"]
+        .as_str()
+        .ok_or(Error::InternalRequestFailed)?
+        .to_string();
+    let color = data["primaryColorHex"]
+        .as_str()
+        .ok_or(Error::InternalRequestFailed)?
+        .to_string();
+    let avatar = data["profileImageURL"]
+        .as_str()
+        .ok_or(Error::InternalRequestFailed)?
+        .to_string();
     Ok(TwitchChannel {
         id,
         name,

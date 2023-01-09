@@ -1,10 +1,16 @@
-use std::{cmp::min, sync::Arc, path::PathBuf};
+use std::{cmp::min, path::PathBuf, sync::Arc};
 
 use futures::AsyncReadExt;
-use mongodb::{Collection, bson::doc};
+use mongodb::{bson::doc, Collection};
 use serde::{Deserialize, Serialize};
 
-use crate::{environment::{MONGODB_DATABASE, get_s3_bucket, LOCAL_STORAGE_PATH, USE_S3}, errors::{Error, Result}, database::DATABASE, routes::serve::Resize, utilities::try_resize};
+use crate::{
+    database::DATABASE,
+    environment::{get_s3_bucket, LOCAL_STORAGE_PATH, MONGODB_DATABASE, USE_S3},
+    errors::{Error, Result},
+    routes::serve::Resize,
+    utilities::try_resize,
+};
 
 pub fn get_collection() -> Collection<File> {
     DATABASE
@@ -83,10 +89,7 @@ impl File {
             .ok_or(Error::NotFound)
     }
 
-    pub async fn fetch(
-        &self,
-        resize: Option<Resize>,
-    ) -> Result<(Vec<u8>, Option<String>)> {
+    pub async fn fetch(&self, resize: Option<Resize>) -> Result<(Vec<u8>, Option<String>)> {
         let mut contents = Vec::new();
         if *USE_S3 {
             let bucket = get_s3_bucket(&self.store)?;
@@ -102,8 +105,10 @@ impl File {
             let path: PathBuf = format!("{}/{}", *LOCAL_STORAGE_PATH, self.id)
                 .parse()
                 .map_err(|_| Error::StorageError)?;
-    
-            let mut f = async_std::fs::File::open(path).await.map_err(|_| Error::StorageError)?;
+
+            let mut f = async_std::fs::File::open(path)
+                .await
+                .map_err(|_| Error::StorageError)?;
             f.read_to_end(&mut contents)
                 .await
                 .map_err(|_| Error::StorageError)?;
@@ -143,13 +148,12 @@ impl File {
                     _ => return Ok((contents_arc.to_vec(), None)),
                 };
                 let contents_arc_moved = contents_arc.clone();
-                if let Ok(bytes) = 
-                    try_resize(
-                        &contents_arc_moved,
-                        target_width as u32,
-                        target_height as u32,
-                    )
-                    .await
+                if let Ok(bytes) = try_resize(
+                    &contents_arc_moved,
+                    target_width as u32,
+                    target_height as u32,
+                )
+                .await
                 {
                     return Ok((bytes, Some("image/webp".to_string())));
                 }
@@ -157,5 +161,4 @@ impl File {
         }
         Ok((contents_arc.to_vec(), None))
     }
-    
 }

@@ -6,9 +6,7 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug, Serialize)]
 #[serde(tag = "error", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Error {
-    FileTooLarge {
-        max_size: usize,
-    },
+    FileTooLarge { max_size: usize },
     FileTypeNotAllowed,
 
     InvalidData,

@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use reqwest::Response;
-use scraper::{Selector, Html};
+use scraper::{Html, Selector};
 use serde::Serialize;
 use std::collections::HashMap;
 use validator::Validate;
@@ -10,7 +10,7 @@ use youtubei_rs::{query::player, utils::default_client_config};
 use crate::{
     errors::{Error, Result},
     scraper::get_twitch_channel,
-    utilities::{get_media_size, fetch, Image, ImageSize, Special, Video},
+    utilities::{fetch, get_media_size, Image, ImageSize, Special, Video},
 };
 
 lazy_static! {
@@ -152,9 +152,7 @@ impl Metadata {
             original_url: url,
             special: None,
         };
-        metadata
-            .validate()
-            .map_err(|_| Error::ValidationFailed)?;
+        metadata.validate().map_err(|_| Error::ValidationFailed)?;
         Ok(metadata)
     }
 

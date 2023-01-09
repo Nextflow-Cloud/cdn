@@ -7,8 +7,7 @@ use std::env;
 lazy_static! {
     pub static ref STORES: String =
         env::var("STORES").unwrap_or_else(|_| String::from("Stores.toml"));
-    pub static ref HOST: String =
-        env::var("HOST").expect("Missing CDN_HOST environment variable");
+    pub static ref HOST: String = env::var("HOST").expect("Missing CDN_HOST environment variable");
     pub static ref MONGODB_URI: String =
         env::var("MONGODB_URI").expect("Missing CDN_MONGODB_URI environment variable");
     pub static ref MONGODB_DATABASE: String =

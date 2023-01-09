@@ -2,12 +2,12 @@ pub mod constants;
 pub mod database;
 pub mod environment;
 pub mod errors;
+pub mod files;
 pub mod metadata;
 pub mod routes;
 pub mod scraper;
 pub mod stores;
 pub mod utilities;
-pub mod files;
 
 use std::{env, time::Duration};
 

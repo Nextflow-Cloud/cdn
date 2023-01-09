@@ -10,7 +10,7 @@ use tempfile::NamedTempFile;
 
 use crate::environment::{get_s3_bucket, LOCAL_STORAGE_PATH, USE_S3};
 use crate::errors::{Error, Result};
-use crate::files::{File, get_collection, FileMetadata};
+use crate::files::{get_collection, File, FileMetadata};
 use crate::stores::{ContentType, Store};
 use crate::utilities::determine_video_size;
 
@@ -55,9 +55,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             "video/mp4" | "video/webm" | "video/quicktime" => {
                 let mut tmp = NamedTempFile::new().map_err(|_| Error::ProcessingError)?;
                 tmp.write_all(&buf).map_err(|_| Error::ProcessingError)?;
-                if let Ok((width, height)) =
-                    determine_video_size(tmp.path()).await
-                {
+                if let Ok((width, height)) = determine_video_size(tmp.path()).await {
                     FileMetadata::Video { width, height }
                 } else {
                     FileMetadata::File

@@ -1,6 +1,6 @@
 use std::io::Cursor;
-use std::time::Duration;
 use std::io::Write;
+use std::time::Duration;
 
 use image::imageops::FilterType;
 use image::io::Reader;
@@ -13,10 +13,8 @@ use tempfile::NamedTempFile;
 use validator::Validate;
 use webp::Encoder;
 
+use crate::metadata::Metadata;
 use crate::scraper::TwitchChannel;
-use crate::{
-    metadata::Metadata,
-};
 
 use super::errors::Error;
 

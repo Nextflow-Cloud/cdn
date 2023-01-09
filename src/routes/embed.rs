@@ -8,7 +8,7 @@ use serde::Deserialize;
 
 use crate::errors::Result;
 use crate::metadata::Metadata;
-use crate::utilities::{get_media_size, fetch, Embed, Image, ImageSize, Video};
+use crate::utilities::{fetch, get_media_size, Embed, Image, ImageSize, Video};
 
 #[derive(Deserialize)]
 pub struct Parameters {
@@ -47,7 +47,11 @@ pub async fn handle(info: Query<Parameters>) -> Result<impl Responder> {
         }
         (mime::VIDEO, _) => {
             if let Ok((width, height)) = get_media_size(resp, mime).await {
-                Ok(Json(Embed::Video(Video { url: url.to_string(), width, height })))
+                Ok(Json(Embed::Video(Video {
+                    url: url.to_string(),
+                    width,
+                    height,
+                })))
             } else {
                 Ok(Json(Embed::None))
             }

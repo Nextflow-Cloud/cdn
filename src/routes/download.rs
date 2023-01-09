@@ -1,8 +1,8 @@
 use actix_web::{web, HttpResponse, Responder};
 
 use crate::constants::CACHE_CONTROL;
-use crate::files::File;
 use crate::errors::Result;
+use crate::files::File;
 use crate::stores::Store;
 
 pub async fn handle(path: web::Path<(String, String)>) -> Result<impl Responder> {
