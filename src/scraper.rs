@@ -22,8 +22,7 @@ pub async fn get_twitch_channel(channel_id: String) -> Result<TwitchChannel> {
         .header("Client-ID", CLIENT_ID)
         .header("Content-Type", "text/plain;charset=UTF-8")
         .body(format!(
-            "[{{\"operationName\":\"ChannelShell\",\"variables\":{{\"login\":\"{}\"}},\"extensions\":{{\"persistedQuery\":{{\"version\":1,\"sha256Hash\":\"580ab410bcd0c1ad194224957ae2241e5d252b2c5173d8e0cce9d32d5bb14efe\"}}}}}}]",
-            channel_id
+            "[{{\"operationName\":\"ChannelShell\",\"variables\":{{\"login\":\"{channel_id}\"}},\"extensions\":{{\"persistedQuery\":{{\"version\":1,\"sha256Hash\":\"580ab410bcd0c1ad194224957ae2241e5d252b2c5173d8e0cce9d32d5bb14efe\"}}}}}}]"
         ))
         .send()
         .await
