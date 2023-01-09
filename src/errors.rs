@@ -2,7 +2,6 @@ use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
 use serde::Serialize;
 use std::fmt::{Display, Formatter};
-use validator::ValidationErrors;
 
 #[derive(Debug, Serialize)]
 #[serde(tag = "error", rename_all = "SCREAMING_SNAKE_CASE")]
