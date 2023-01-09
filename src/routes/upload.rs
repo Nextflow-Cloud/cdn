@@ -40,8 +40,8 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             }
             buf.append(&mut data.to_vec());
         }
-        let content_type = tree_magic::from_u8(&buf);
-        let metadata = match content_type.as_str() {
+        let content_type = tree_magic_mini::from_u8(&buf);
+        let metadata = match content_type {
             "image/jpeg" | "image/png" | "image/gif" | "image/webp" => {
                 if let Ok(imagesize::ImageSize { width, height }) = imagesize::blob_size(&buf) {
                     FileMetadata::Image {
@@ -88,7 +88,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             store: store_id.clone(),
             filename,
             metadata,
-            content_type,
+            content_type: content_type.to_string(),
             size: buf.len() as isize,
             deleted: false,
             flagged: false,
