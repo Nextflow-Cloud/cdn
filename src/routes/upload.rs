@@ -8,9 +8,9 @@ use futures::{StreamExt, TryStreamExt};
 use serde::Serialize;
 use tempfile::NamedTempFile;
 
-use crate::database::{get_collection, FileMetadata};
 use crate::environment::{get_s3_bucket, LOCAL_STORAGE_PATH, USE_S3};
 use crate::errors::{Error, Result};
+use crate::files::{File, get_collection, FileMetadata};
 use crate::stores::{ContentType, Store};
 use crate::utilities::determine_video_size;
 
@@ -55,8 +55,8 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             "video/mp4" | "video/webm" | "video/quicktime" => {
                 let mut tmp = NamedTempFile::new().map_err(|_| Error::ProcessingError)?;
                 tmp.write_all(&buf).map_err(|_| Error::ProcessingError)?;
-                if let Ok(Ok((width, height))) =
-                    web::block(move || determine_video_size(tmp.path())).await
+                if let Ok((width, height)) =
+                    determine_video_size(tmp.path()).await
                 {
                     FileMetadata::Video { width, height }
                 } else {
@@ -83,7 +83,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             }
         }
         let id = ulid::Ulid::new().to_string();
-        let file = crate::database::File {
+        let file = File {
             id: id.clone(),
             store: store_id.clone(),
             filename,
@@ -94,7 +94,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             flagged: false,
             attached: false,
         };
-        get_collection("files")
+        get_collection()
             .insert_one(&file, None)
             .await
             .map_err(|_| Error::DatabaseError)?;

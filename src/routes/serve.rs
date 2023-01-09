@@ -4,10 +4,9 @@ use mongodb::bson::doc;
 use serde::Deserialize;
 
 use crate::constants::CACHE_CONTROL;
-use crate::database::File;
+use crate::files::File;
 use crate::errors::Result;
 use crate::stores::Store;
-use crate::utilities::fetch_file;
 
 #[derive(Deserialize)]
 pub struct Resize {
@@ -25,7 +24,7 @@ pub async fn handle(
     Store::get(&store_id)?;
     let file = File::find(&id, &store_id).await?;
     let (contents, content_type) =
-        fetch_file(&id, &store_id, file.metadata, Some(resize.0)).await?;
+        file.fetch(Some(resize.0)).await?;
     let content_type = content_type.unwrap_or(file.content_type);
     let disposition = match content_type.as_ref() {
         "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "video/mp4" | "video/webm"

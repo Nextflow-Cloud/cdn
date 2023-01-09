@@ -22,6 +22,12 @@ pub enum Error {
     ProcessingError,
     StorageError,
 
+    MetaParseFailed,
+    MissingContentType,
+    CannotProxy,
+    InternalRequestFailed,
+    RequestFailed,
+    ValidationFailed,
 }
 
 impl Display for Error {
@@ -47,6 +53,12 @@ impl ResponseError for Error {
             Error::ProcessingError => StatusCode::INTERNAL_SERVER_ERROR,
             Error::StorageError => StatusCode::INTERNAL_SERVER_ERROR,
 
+            Error::MetaParseFailed => StatusCode::INTERNAL_SERVER_ERROR,
+            Error::MissingContentType => StatusCode::BAD_REQUEST,
+            Error::CannotProxy => StatusCode::BAD_REQUEST,
+            Error::InternalRequestFailed => StatusCode::INTERNAL_SERVER_ERROR,
+            Error::RequestFailed => StatusCode::BAD_REQUEST,
+            Error::ValidationFailed => StatusCode::BAD_REQUEST,
         }
     }
 

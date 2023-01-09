@@ -2,22 +2,25 @@ pub mod constants;
 pub mod database;
 pub mod environment;
 pub mod errors;
+pub mod metadata;
 pub mod routes;
+pub mod scraper;
 pub mod stores;
 pub mod utilities;
+pub mod files;
 
 use std::{env, time::Duration};
 
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{middleware::Logger, web, App, HttpServer};
+use async_std::stream::StreamExt;
 use async_std::{fs::create_dir_all, task};
-use futures::StreamExt;
 use log::info;
 use mongodb::bson::doc;
 
-use database::get_collection;
-use environment::{HOST, LOCAL_STORAGE_PATH, USE_S3};
+use crate::environment::{HOST, LOCAL_STORAGE_PATH, USE_S3};
+use crate::files::get_collection;
 
 #[async_std::main]
 async fn main() -> std::io::Result<()> {
@@ -50,7 +53,7 @@ async fn main() -> std::io::Result<()> {
     task::spawn(async {
         loop {
             task::spawn(async {
-                let collection = get_collection("files");
+                let collection = get_collection();
                 let mut cursor = collection
                     .find(
                         doc! {
@@ -96,6 +99,8 @@ async fn main() -> std::io::Result<()> {
                 "/stores/{store}/files/{filename:.*}",
                 web::get().to(routes::serve::handle),
             )
+            .route("/embed", web::get().to(routes::embed::handle))
+            .route("/proxy", web::get().to(routes::proxy::handle))
     })
     .bind(&*HOST)?
     .run()
