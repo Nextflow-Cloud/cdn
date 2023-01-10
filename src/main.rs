@@ -58,9 +58,7 @@ async fn main() -> std::io::Result<()> {
                     .find(
                         doc! {
                             "deleted": true,
-                            "flagged": {
-                                "$ne": true
-                            }
+                            "flagged": false
                         },
                         None,
                     )
