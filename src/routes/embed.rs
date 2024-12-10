@@ -2,8 +2,6 @@ use actix_web::{
     web::{Json, Query},
     Responder,
 };
-use lazy_static::lazy_static;
-use regex::Regex;
 use serde::Deserialize;
 
 use crate::errors::Result;
@@ -15,14 +13,8 @@ pub struct Parameters {
     url: String,
 }
 
-lazy_static! {
-    static ref RE_TWITTER: Regex =
-        Regex::new("^(?:https?://)?(?:www\\.)?twitter\\.com").expect("Failed to compile regex");
-}
-
 pub async fn handle(info: Query<Parameters>) -> Result<impl Responder> {
     let url = info.into_inner().url;
-    let url = RE_TWITTER.replace(&url, "https://nitter.net");
     let (resp, mime) = fetch(&url).await?;
     match (mime.type_(), mime.subtype()) {
         (_, mime::HTML) => {

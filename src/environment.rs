@@ -26,7 +26,7 @@ lazy_static! {
 
 pub fn get_s3_bucket(bucket: &str) -> Result<s3::Bucket> {
     Ok(
-        s3::Bucket::new(bucket, S3_REGION.clone(), S3_CREDENTIALS.clone())
+        *s3::Bucket::new(bucket, S3_REGION.clone(), S3_CREDENTIALS.clone())
             .map_err(|_| Error::StorageError)?
             .with_path_style(),
     )

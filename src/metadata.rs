@@ -39,10 +39,10 @@ pub struct Metadata {
     #[validate(length(min = 1, max = 2000))]
     description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate]
+    #[validate(nested)]
     image: Option<Image>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate]
+    #[validate(nested)]
     video: Option<Video>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

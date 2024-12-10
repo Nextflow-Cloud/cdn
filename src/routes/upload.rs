@@ -23,7 +23,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
     let store_id = path.into_inner();
     let store = Store::get(&store_id)?;
     if let Ok(Some(mut field)) = payload.try_next().await {
-        let content_type = field.content_disposition();
+        let content_type = field.content_disposition().unwrap();
         let filename = content_type
             .get_filename()
             .ok_or(Error::InvalidData)?
@@ -93,7 +93,7 @@ pub async fn handle(path: web::Path<String>, mut payload: Multipart) -> Result<i
             attached: false,
         };
         get_collection()
-            .insert_one(&file, None)
+            .insert_one(&file)
             .await
             .map_err(|_| Error::DatabaseError)?;
         if *USE_S3 {

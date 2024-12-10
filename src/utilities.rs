@@ -3,8 +3,8 @@ use std::io::Write;
 use std::time::Duration;
 
 use image::imageops::FilterType;
-use image::io::Reader;
 use image::ImageError;
+use image::ImageReader;
 use lazy_static::lazy_static;
 use mime::Mime;
 use reqwest::{header::CONTENT_TYPE, Client, Response};
@@ -140,7 +140,7 @@ pub async fn get_media_size(resp: Response, mime: Mime) -> Result<(isize, isize)
 }
 
 pub async fn try_resize(buf: &Vec<u8>, width: u32, height: u32) -> Result<Vec<u8>, ImageError> {
-    let image = Reader::new(Cursor::new(buf))
+    let image = ImageReader::new(Cursor::new(buf))
         .with_guessed_format()?
         .decode()?
         .resize_exact(width, height, FilterType::Gaussian);

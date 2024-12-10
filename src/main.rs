@@ -60,7 +60,6 @@ async fn main() -> std::io::Result<()> {
                             "deleted": true,
                             "flagged": false
                         },
-                        None,
                     )
                     .await
                     .expect("Failed to find files to delete");

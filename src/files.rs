@@ -66,7 +66,7 @@ impl File {
 
     pub async fn delete(self) -> Result<()> {
         get_collection()
-            .delete_one(doc! { "id": &self.id }, None)
+            .delete_one(doc! { "id": &self.id })
             .await
             .map_err(|_| Error::DatabaseError)?;
         self.delete_in_storage().await?;
@@ -82,7 +82,6 @@ impl File {
                     "attached": true,
                     "deleted": false,
                 },
-                None,
             )
             .await
             .map_err(|_| Error::DatabaseError)?
